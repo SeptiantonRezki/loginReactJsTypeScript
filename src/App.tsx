@@ -1,25 +1,44 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, { createContext, useState } from 'react';
 import './App.css';
 
+import { Route, Routes } from 'react-router-dom';
+import { User } from './Models';
+import HomePage from './Pages/Home/HomePage';
+import LoginPage from './Pages/Login/LoginPage';
+import PrivateRoutePage from './PrivateRoutePage';
+import CurrentUserContext from './Store/userStore';
+
 function App() {
+  const [getCurrentUser, setCurrentUser] = useState<User | null>(null);
+  console.log(getCurrentUser);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <CurrentUserContext.Provider value={{ currentUser: getCurrentUser, dispatch: setCurrentUser }}>
+      <Routes>
+        <Route path='/'
+          element={
+            <PrivateRoutePage >
+              <HomePage />
+            </PrivateRoutePage>
+          }
+        />
+        <Route path='/login' element={<LoginPage />} />
+        <Route path='/home'
+          element={
+            <PrivateRoutePage >
+              <HomePage />
+            </PrivateRoutePage>
+          } />
+        <Route path='*'
+          element={
+            <PrivateRoutePage >
+              <HomePage />
+            </PrivateRoutePage>
+          } />
+      </Routes>
+
+    </CurrentUserContext.Provider>
+
   );
 }
 
